@@ -14,8 +14,6 @@
 extern double sl_atr_szorzo=0.5;
 extern double tp_atr_szorzo=0.75;
 extern double risk=300;
-//extern double kezdolot=0.01;
-extern string testid="mbtestmatrix001";
 extern int kezdo_ora=0;
 extern int veg_ora=24;
 extern int torlo_ora=17;
@@ -296,4 +294,3 @@ void OnTick(){
    
   
 }
-//+------------------------------------------------------------------+
