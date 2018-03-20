@@ -1,9 +1,8 @@
 #property copyright "Copyright 2018, zenott"
 #property version   "1.0"
 #property strict
-//+------------------------------------------------------------------+
-//| Expert initialization function                                   |
-//+------------------------------------------------------------------+
+
+// Expert initialization function                                   
 
 extern double sl_atr_szorzo=0.5;
 extern double tp_atr_szorzo=10;
@@ -56,7 +55,6 @@ int OnInit(){
 }
 
 void OnDeinit(const int reason){
-//---
    ObjectDelete("sor_1");
    ObjectDelete("sor_2");
    for(int i=0;i<=4; i++){
@@ -89,7 +87,6 @@ void OnTick(){
          if ((TimeHour(TimeCurrent())>=kezdo_ora) && (TimeHour(TimeCurrent())<=veg_ora)) in_time=true;
          
          if(TimeHour(TimeCurrent())==torlo_ora){
-//            torles();
             for(int i=0;i<=4; i++){
                buy_pending_price[i]=0;
             }
@@ -102,7 +99,6 @@ void OnTick(){
          
          
          if(up_open==true&&(uptrend==true||dont_use_ma)&&in_time==true){
-//            torles();
             for(int i=0;i<=4; i++){
                if(buy_pending_price[i]==0) {
                   buy_pending_price[i]=up_price;
@@ -110,15 +106,9 @@ void OnTick(){
                   break;
                }
             }
-/*            if(up_ticket_1<=0) Print("#"+OrderTicket()+" Error = ",GetLastError());
-            else{
-               up_open=false;
-               up_price=0;
-            } */
          }
          
          if(down_open==true&&(uptrend==false||dont_use_ma)&&in_time==true){
-//            torles();
             for(int i=0;i<=4; i++){
                if(sell_pending_price[i]==0) {
                   sell_pending_price[i]=down_price;
@@ -126,12 +116,6 @@ void OnTick(){
                   break;
                }
             }
-/*            int down_ticket_1=OrderSend(Symbol(),OP_SELLSTOP,NormalizeDouble(kezdolot,2),down_price,5,NormalizeDouble(down_price+tav*Point,Digits),NormalizeDouble(down_price-tp*Point,Digits),"12481632",12481632,0,Green);
-            if(down_ticket_1<=0) Print("#"+OrderTicket()+" Error = ",GetLastError());
-            else{
-               down_open=false;
-               down_price=0;
-            } */
          }
          
          ObjectSet("sor_1",OBJPROP_CORNER,2);
@@ -154,10 +138,6 @@ void OnTick(){
       for(int pos=0;pos<OrdersTotal();pos++) {
       if (OrderSelect(pos,SELECT_BY_POS)==false) continue;
          if (OrderType()==OP_BUY && OrderSymbol()==Symbol() && OrderMagicNumber()==magic_number){
-   /*trailing         if ((Bid>OrderOpenPrice()+40*Point)&&(OrderStopLoss()<Bid-20*Point)){
-               bool res=OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(Bid-Point*20,Digits),OrderTakeProfit(),0,Blue);
-               if(!res) Print("Error in OrderModify. Error code=",GetLastError());
-               else Print("Order sl modified successfully.");*/
             int n;
             if ((Bid-OrderOpenPrice())<0) n=0; 
             else n=MathFloor(((Bid-OrderOpenPrice())/Point)/trailingstep);
@@ -169,21 +149,15 @@ void OnTick(){
          }
          
          if (OrderType()==OP_SELL && OrderSymbol()==Symbol() && OrderMagicNumber()==magic_number){
-   /*trailing         if ((Bid>OrderOpenPrice()+40*Point)&&(OrderStopLoss()<Bid-20*Point)){
-               bool res=OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(Bid-Point*20,Digits),OrderTakeProfit(),0,Blue);
-               if(!res) Print("Error in OrderModify. Error code=",GetLastError());
-               else Print("Order sl modified successfully.");*/
             int n;
             if ((OrderOpenPrice()-Ask)<0) n=0; 
             else n=MathFloor(((OrderOpenPrice()-Ask)/Point)/trailingstep);
-   //         Print(OrderTicket()+"|"+n+"|"+Ask+"|"+OrderOpenPrice()+"|"+OrderStopLoss()+"|"+(OrderOpenPrice()-(n-1)*trailingstep*Point));
             if ((Ask<OrderOpenPrice()-trailingstart*Point)&&(OrderStopLoss()-Point>OrderOpenPrice()-(n-1)*trailingstep*Point)){
                bool res=OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(OrderOpenPrice()-(n-1)*trailingstep*Point,Digits),OrderTakeProfit(),0,Blue);
                if(!res) Print("#"+OrderTicket()+" Error in OrderModify. Error code=",GetLastError());
                else Print("#"+OrderTicket()+" order sl modified successfully."); 
             }
          }
-         
       }
    }
    
@@ -218,7 +192,6 @@ void OnTick(){
          if(atr_stop==true) tav=(sl_atr_szorzo*atr)/Point;
          else tav=sl;
          double kezdolot=(risk)/(tav*MarketInfo(Symbol(),MODE_TICKVALUE));
-//         Print(sell_pending_price+tav*Point);
          int down_ticket_1=OrderSend(Symbol(),OP_SELL,NormalizeDouble(kezdolot,2),Bid,7,NormalizeDouble(Bid+tav*Point,Digits),NormalizeDouble(Bid-tp*Point,Digits),IntegerToString(magic_number),magic_number,0,Green);
          if(down_ticket_1<=0) Print("#"+OrderTicket()+" at "+Bid+", Error = ",GetLastError());
          else Print("#"+OrderTicket()+" at "+Bid+" opened");
@@ -239,8 +212,6 @@ void OnTick(){
 
 //supertrend trailing
 
-//   double StGreen=iCustom(NULL,PERIOD_M1,"xSuperTrend",10,2,2,1);;
-//   double StRed=iCustom(NULL,PERIOD_M1,"xSuperTrend",10,2,1,1);
    double StGreen;
    double StRed;
    
@@ -308,8 +279,6 @@ void OnTick(){
          for(int i=OrdersTotal() - 1;i>=0; i--) {
             bool os=OrderSelect(i,SELECT_BY_POS);
             
-               
-               
             if (parSAR>OrderOpenPrice() && parSAR!=EMPTY_VALUE){
                  if(OrderSymbol()==Symbol() && OrderMagicNumber()==magic_number  && OrderType()==OP_BUY && (OrderStopLoss()<0.99999*parSAR)) {
                         bool mod=OrderModify(OrderTicket(),OrderOpenPrice(),NormalizeDouble(parSAR,Digits),OrderTakeProfit(),0,Blue);
@@ -325,10 +294,8 @@ void OnTick(){
                         if (mod==true) Print ("Order modified: ",OrderTicket());
                            else Print("Error = ",GetLastError());
                  } 
-            }
-            
+            }  
          }
-      
       
       
       for(int i=OrdersTotal() - 1;i>=0; i--) {
@@ -374,8 +341,4 @@ void OnTick(){
          ObjectSet("sell_pending"+IntegerToString(i,1),OBJPROP_STYLE,STYLE_DASH);
       }
    }
-   
-   
-  
 }
-//+------------------------------------------------------------------+
